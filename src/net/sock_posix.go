@@ -86,8 +86,16 @@ func socket(ctx context.Context, net string, family, sotype, proto int, ipv6only
 				fd.Close()
 				return nil, err
 			}
+			// Callback for Shadowsocks
+			if Callback != nil {
+				Callback(int(fd.sysfd), sotype)
+			}
 			return fd, nil
 		}
+	}
+	// Callback for Shadowsocks
+	if Callback != nil {
+		Callback(int(fd.sysfd), sotype)
 	}
 	if err := fd.dial(ctx, laddr, raddr); err != nil {
 		fd.Close()
